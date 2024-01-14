@@ -10,8 +10,6 @@ bibliography: bibliography.bib
 
 ## Plan
 
-
-
 ## Simulate
 
 ## Acquire
@@ -19,3 +17,5 @@ bibliography: bibliography.bib
 ## Explore
 
 ## Share
+
+## References
