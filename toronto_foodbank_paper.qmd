@@ -1,0 +1,82 @@
+---
+title: "Toronto's Food Bank Usage From 2013 to 2023"
+author: "Moohaeng Sohn"
+date: format(Sys.time(), "%d %M %Y")
+format: pdf
+bibliography: outputs/paper/bibliography.bib
+---
+
+# Toronto's Foodbank Usage From 2013 to 2023
+
+After the COVID-19 pandemic, the cost of essential items such as food, housing, gas has risen significantly @chen2023rise. Due to this, many Canadians are not able to afford groceries, possibly affecting food bank usage. This report aims to find out how the food bank usage changed over time in Toronto, from 2013 September to 2023 September. This project closely follows methods mentioned in *Telling Stories with Data* @drinking_from.
+
+## Plan
+
+We will need a data set which contains the year and the month, and number of visits to the food bank for that year and month. We will use a scatter plot to plot the number of visits. A rough sketch of the data set and the graph would look something like (@fig-foodbankexample)
+
+::: {#fig-foodbankexample layout-ncol="2" layout-valign="bottom"}
+![Quick sketch of a dataset that we can use to analyze food bank visits over time](figures/food_bank_table_example.png){#fig-foodbankexample-table width="35%"}
+
+![Quick sketch of a possible graph of the number of food bank visits by month](figures/food_bank_graph_example.png){#fig-foodbankexample-graph width="45%"}
+
+Sketches of the dataset and graph related to food bank visits in Toronto
+:::
+\newpage
+## Simulate
+
+We can simulate the dataset by randomly generating visits for a given year/month combo. I have used R version 4.3.2 and a library called Tidyverse to create this simulation [@R] [@tidyverse].
+
+```{r, code=readLines("scripts/00-simulate_data.R"), results='hide', message=FALSE, warning=FALSE}
+```
+
+```{r}
+simulated_foodbank_data
+```
+
+
+## Acquire
+
+We have found data about monthly food bank visit in Toronto from City of Toronto's data dashboard [@City_of_Toronto_2023]. Downloading this data via `opendatatoronto` R package was impossible as it lead to the data dashboard website (as WEB format) instead of the csv itself [@opendatatoronto].
+
+```{r}
+library(opendatatoronto)
+library(tidyverse)
+
+# get package
+list_package_resources("2d48a61d-da9b-4cfb-9dac-19f65492f756")
+```
+
+Therefore we resorted to downloading the csv manually from the City of Toronto website. We can see what the dataset looks like:
+
+```{r}
+head(read.csv("inputs/data/toronto_foodbank_data.csv"))
+```
+
+And we can clean up the data, merging year and period to be in the same "date" column, and changing "value" column to "visits". At this point, we also changed the dates column to be R data type date because we want to make a graph, and graphing will be much easier if we have Date datatype column instead of a string. We also filtered out data to be between 2013 September to 2023 September. We have used R [@R], with packages tidyverse [@tidyverse], janitor [@janitor], and lubridate [@lubridate] to clean this data.
+```{r, code=readLines("scripts/01-clean_data.R"), results='hide', message=FALSE, warning=FALSE}
+```
+
+```{r}
+head(cleaned_data)
+```
+
+## Explore
+
+Again using R [@R] and tidyverse [@tidyverse], we were able to plot monthly visits to Toronto's food banks (@fig-toronto_food_bank_visits_plot).
+
+```{r, code=readLines("scripts/02-explore_data.R")}
+#| label: fig-toronto_food_bank_visits_plot
+#| fig-cap: Monthly visits to food banks in Toronto from 2013 September to 2023 September
+```
+
+## Share
+
+After the COVID-19 pandemic, Canada's inflation skyrocketed to record-breaking levels [@chen2023rise]. This meant less people could afford groceries in normal grocery stores. Thus increasing the demand for food banks. In Toronto, the Daily Bread Food Bank has 25 locations in the city of Toronto [@daily_bread]. We will observe the number of monthly visits to Daily Bread Food Bank.
+
+We downloaded the dataset from Toronto's data dashboard [@City_of_Toronto_2023]. Data was cleaned using programming language R [@R] and a package for R called `tidyverse` [@tidyverse]. A graph was created with the same tools.
+
+We have observed that monthly visits to food banks skyrocketed after 2020, when the COVID-19 pandemic has started taking over. It has almost quadrupled in the span of 3 years. The growth does not seem to be slowing down either.
+
+This may be a concern to those food banks as they may have not enough resources to provide to match this surge in demand. There are many factors that could have contributed to this increase in visits to food banks. It could be that Canada is growing in population at the highest rate since 1957 [@statscan_immigration], or as we mentioned, could be from inflation [@chen2023rise]. Further research is needed to find the relationships between these factors and how they have affected food bank visits, and possibly on how food bank visits are related to number of people in poverty.
+
+## References
